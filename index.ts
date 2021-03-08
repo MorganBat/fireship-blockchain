@@ -36,7 +36,7 @@ class Chain {
     chain: Block[];
 
     constructor() {
-        this.chain = [new Block(null, new Transaction(100, 'genesis', 'satoshi'))];
+        this.chain = [new Block('', new Transaction(100, 'genesis', 'satoshi'))];
     }
 
     get lastBlock() {
@@ -63,7 +63,7 @@ class Chain {
         }
     }
 
-    addBlock(transaction: Transaction, senderPublicKey: string, signature: string) {
+    addBlock(transaction: Transaction, senderPublicKey: string, signature: Buffer) {
         const verifier = crypto.createVerify('SHA256');
         verifier.update(transaction.toString());
 
