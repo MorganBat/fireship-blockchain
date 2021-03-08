@@ -39,7 +39,7 @@ class Block {
     get hash() {
         const str = JSON.stringify(this);
         const hash = crypto.createHash('SHA256');
-        hash.upate(str).end();
+        hash.update(str).end();
         return hash.digest('hex');
     }
 }
@@ -51,8 +51,14 @@ class Chain {
         return this.chain[this.chain.length - 1];
     }
     addBlock(transaction, senderPublicKey, signature) {
-        const newBlock = new Block(this.lastBlock.hash, transaction);
-        this.chain.push(newBlock);
+        const verifier = crypto.createVerify('SHA256');
+        verifier.update(transaction.toString());
+        const isValid = verifier.verify(senderPublicKey, signature);
+        if (isValid) {
+            const newBlock = new Block(this.lastBlock.hash, transaction);
+            this.mine(newBlock.nonce);
+            this.chain.push(newBlock);
+        }
     }
 }
 Chain.instance = new Chain();
